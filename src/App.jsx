@@ -4882,6 +4882,25 @@ const NAV=[
 
 export default function App(){
   const [sesionActiva,setSesionActiva]=useState(false);
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      setSesionActiva(true);
+      setPantallaInicio(false);
+    }
+  });
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      if (session) {
+        setSesionActiva(true);
+        setPantallaInicio(false);
+      }
+    }
+  );
+
+  return () => subscription.unsubscribe();
+}, []);
   const [pantallaInicio,setPantallaInicio]=useState(true);
   const [modoLogin,setModoLogin]=useState("login");
   const [sec,setSec]=useState("inicio");
@@ -4923,11 +4942,13 @@ export default function App(){
     mostrarToast("Nombre actualizado");
   };
 
-  const cerrarSesion = () => {
-    setSesionActiva(false);
-    setSec("inicio");
-  };
-
+  const cerrarSesion = async () => {
+  await supabase.auth.signOut();
+  setSesionActiva(false);
+  setPantallaInicio(true);
+  setSec("inicio");
+};
+    
   const eliminarCuenta = () => {
     Object.keys(localStorage).filter(k=>k.startsWith("emprender_v2_")).forEach(k=>localStorage.removeItem(k));
     setEmprendimientos([]); setEmpActualId(null); setProductos([]); setMovs([]); setPedidos([]); setOnboardingCompleted(false);
