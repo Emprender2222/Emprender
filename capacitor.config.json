@@ -1,0 +1,6 @@
+{
+  "appId": "com.emprender.app",
+  "appName": "Emprender",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
