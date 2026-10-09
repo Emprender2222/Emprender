@@ -5048,7 +5048,13 @@ useEffect(() => {
     }
 
     const {data,error} = registro
-      ? await supabase.auth.signUp({email,password})
+      ? await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo: "https://emprender-app-23sk.vercel.app"
+  }
+})
       : await supabase.auth.signInWithPassword({email,password});
 
     if(error){
